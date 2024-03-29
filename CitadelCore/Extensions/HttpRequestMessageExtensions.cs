@@ -51,9 +51,26 @@ namespace CitadelCore.Extensions
                     continue;
                 }
 
-                if (message.Headers.Contains(key))
+                if (key == "Content-Type")
                 {
-                    message.Headers.Remove(key);
+                    if (message.Content != null && !string.IsNullOrWhiteSpace(headers[key]))
+                    {
+                        message.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(headers[key]);
+                    }
+
+                    continue;
+                }
+
+                try
+                {
+                    if (message.Headers.Contains(key))
+                    {
+                        message.Headers.Remove(key);
+                    }
+                }
+                catch (InvalidOperationException)
+                {
+                    //ignore
                 }
 
                 if (message.Headers.TryAddWithoutValidation(key, headers.GetValues(key)))

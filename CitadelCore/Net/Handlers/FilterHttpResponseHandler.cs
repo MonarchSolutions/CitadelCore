@@ -17,8 +17,10 @@ using Microsoft.AspNetCore.Http.Features;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -496,6 +498,12 @@ namespace CitadelCore.Net.Handlers
                                             };
 
                                             _configuration.HttpMessageWholeBodyInspectionHandler?.Invoke(responseMessageNfo);
+
+                                            //ADDED:
+                                            if (!responseMessageNfo.Body.Span.SequenceEqual(responseBody))
+                                            {
+                                                responseBody = responseMessageNfo.Body.ToArray();
+                                            }
 
                                             if (responseMessageNfo.ProxyNextAction == ProxyNextAction.DropConnection)
                                             {
